@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Dark mode by default - deep navy/slate background */
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+
+    /* Cards slightly lighter than background */
+    --card: 224 47% 8%;
+    --card-foreground: 213 31% 91%;
+
+    --popover: 224 47% 8%;
+    --popover-foreground: 213 31% 91%;
+
+    /* Vibrant purple primary */
+    --primary: 270 70% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Darker purple for secondary actions */
+    --secondary: 270 60% 15%;
+    --secondary-foreground: 270 70% 85%;
+
+    /* Muted gray tones */
+    --muted: 223 47% 11%;
+    --muted-foreground: 215 20% 65%;
+
+    /* Purple accent */
+    --accent: 270 70% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Red for destructive actions */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Success green */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning yellow */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Subtle borders */
+    --border: 224 47% 12%;
+    --input: 224 47% 12%;
+    --ring: 270 70% 65%;
+
+    --radius: 0.5rem;
+
+    /* Gradient definitions */
+    --gradient-primary: linear-gradient(135deg, hsl(270 70% 65%) 0%, hsl(280 70% 55%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(224 71% 8%) 0%, hsl(224 47% 12%) 100%);
+    
+    /* Glow effect for highlights */
+    --glow-primary: 0 8px 32px hsl(270 70% 65% / 0.3);
+    --glow-card: 0 4px 24px hsl(0 0% 0% / 0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Smooth transitions */
+  button, a, input, select, textarea {
+    @apply transition-all duration-200;
+  }
+}
+
+@layer components {
+  /* Gradient backgrounds */
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: var(--glow-primary);
+  }
+
+  .glow-card {
+    box-shadow: var(--glow-card);
+  }
+}
