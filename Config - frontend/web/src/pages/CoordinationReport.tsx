@@ -83,12 +83,13 @@ const CoordinationReport = () => {
       <div className="container mx-auto max-w-7xl py-8">
         <Button
           variant="ghost"
-          onClick={() => navigate("/dashboard")}
-          className="mb-6"
+          onClick={() => navigate(-1)}
+          className="mb-6 flex items-center text-sm font-medium hover:text-primary transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Voltar ao Dashboard
+          Voltar
         </Button>
+
 
         <Card className="glow-card border-border/50 mb-6">
           <CardHeader>
@@ -173,9 +174,9 @@ const CoordinationReport = () => {
                           <Badge variant="outline" className="text-xs">
                             {user.profile}
                           </Badge>
-                          <Badge 
-                            className={user.status === "active" 
-                              ? "bg-[hsl(var(--success))]/10 text-[hsl(var(--success))] border-[hsl(var(--success))]/20" 
+                          <Badge
+                            className={user.status === "active"
+                              ? "bg-[hsl(var(--success))]/10 text-[hsl(var(--success))] border-[hsl(var(--success))]/20"
                               : "bg-muted text-muted-foreground border-border"
                             }
                           >

@@ -1,7 +1,12 @@
 from flask import Blueprint, request, jsonify
-from src.controller import (controller_register_user,
-                            controller_login_user,controller_change_permission,
-                            controller_active_user, controller_get_all_users, controller_delete_user)
+from src.users.controller import (
+    controller_register_user,
+    controller_login_user,
+    controller_change_permission,
+    controller_active_user,
+    controller_get_all_users,
+    controller_delete_user,
+                            )
 
 
 api_bp = Blueprint("api", __name__)
@@ -39,5 +44,4 @@ def get_users():
 def delete_user(re):
     resp, status = controller_delete_user(re)
     return jsonify(resp), status
-
 

@@ -1,5 +1,5 @@
-from src.models import ( models_insert_user, models_get_user_by_re, models_activer_user, models_change_permission, models_insert_user_historic
-                         ,models_get_all_users, models_delete_user)
+from src.users.models import ( models_insert_user, models_get_user_by_re, models_activer_user, models_change_permission, models_insert_user_historic
+                         ,models_get_all_users, models_delete_user,  )
 
 def controller_register_user(data):
     # verifica se já existe
@@ -17,7 +17,6 @@ def controller_register_user(data):
         return {"message": "Erro ao registrar usuário"}, 500
 
     return {"message": "Usuário registrado com sucesso"}, 201
-
 
 def controller_login_user(data):
     user = models_get_user_by_re(data["re"])  # busca usuário no banco
@@ -39,10 +38,10 @@ def controller_login_user(data):
 
     # Sucesso
     return {
-        "user": {"nome": user["nome"], "permissao": user["permissao"]}
+        "user": {"nome": user["nome"],
+                 "permissao": user["permissao"],
+                 "re": user["re"]}
     }, 200
-
-
 
 def controller_active_user(data):
     if not models_get_user_by_re(data["re"]):
@@ -51,7 +50,6 @@ def controller_active_user(data):
     if models_activer_user(data["re"]):
         return {"message": "Usuário ativado com sucesso"}, 200
     return {"message": "Erro ao ativar usuário"}, 500
-
 
 def controller_change_permission(data):
     if not models_get_user_by_re(data["re"]):
@@ -72,6 +70,7 @@ def controller_delete_user(re):
     if models_delete_user(re):
         return {"message": "Usuário excluído com sucesso"}, 200
     return {"message": "Erro ao excluir usuário"}, 500
+
 
 
 

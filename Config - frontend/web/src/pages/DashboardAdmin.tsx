@@ -1,28 +1,18 @@
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
-  UserPlus, 
   Settings, 
   FileCheck, 
   FileClock, 
   BarChart3, 
   Users,
-  LogOut,
   Columns3, 
 } from "lucide-react";
 
 
 const Dashboard = () => {
   const menuItems = [
-       {
-      title: "Perfis de Usuários",
-      description: "Listagem dos Usuários",
-      icon: Users,
-      path: "/user-list",
-      color: "text-muted-foreground",
-      bgColor: "bg-muted",
-    },
     {
       title: "Cadastro de Configuração",
       description: "Criar nova configuração",
@@ -56,31 +46,6 @@ const Dashboard = () => {
       bgColor: "bg-[hsl(var(--warning))]/10",
     },
     
-    {
-      title: "Configurações Aprovadas ",
-      description: "Visualizar configurações aprovadas",
-      icon: FileCheck,
-      path: "/approved-configs",
-      color: "text-[hsl(var(--success))]",
-      bgColor: "bg-[hsl(var(--success))]/10",
-    },
-    {
-      title: "Relatório da Coordenação",
-      description: "Acompanhamento de atividades dos usuários",
-      icon: BarChart3,
-      path: "/coordination-report",
-      color: "text-accent",
-      bgColor: "bg-accent/10",
-    },
-    {
-      title: "Perfis de Acesso",
-      description: "Gerenciar perfis e permissões",
-      icon: Users,
-      path: "/profiles",
-      color: "text-muted-foreground",
-      bgColor: "bg-muted",
-    },
-    
   ];
 
   return (
@@ -89,7 +54,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Dashboard</h2>
+          <h2 className="text-3xl font-bold mb-2">Inicio</h2>
           <p className="text-muted-foreground">Bem-vindo ao sistema. Selecione uma opção abaixo.</p>
         </div>
 

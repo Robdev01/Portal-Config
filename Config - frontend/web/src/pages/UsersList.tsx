@@ -111,6 +111,13 @@ const UsersList = () => {
       });
     }
   };
+  const permissoesMap: Record<string, string> = {
+    tecnico: "Técnico",
+    escritorio: "Administrativo",
+    usuario: "Administrativo",
+    coordenador: "Coordenação",
+    admin: "Administrador",
+  };
 
   // filtro em tempo real
   useEffect(() => {
@@ -134,10 +141,15 @@ const UsersList = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="container mx-auto max-w-5xl space-y-6">
-        <Button variant="ghost" onClick={() => navigate("/dashboard")}>
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="mb-6 flex items-center text-sm font-medium hover:text-primary transition-colors"
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Voltar ao Dashboard
+          Voltar
         </Button>
+
 
         <Input
           placeholder="Buscar por nome ou RE"
@@ -158,8 +170,16 @@ const UsersList = () => {
                   <h2 className="text-lg font-semibold">
                     {user.nome} <span className="text-muted-foreground">({user.re})</span>
                   </h2>
-                  <p className="text-sm text-muted-foreground">Permissão: {user.permissao}</p>
-                  <Badge className={`mt-2 ${user.ativo === "sim" ? "bg-primary text-white" : "bg-red-500 text-white"}`}>
+                  <p className="text-sm text-muted-foreground">
+                    {permissoesMap[user.permissao] || user.permissao}
+                  </p>
+
+                  <Badge
+                    className={`mt-2 ${user.ativo === "sim"
+                      ? "bg-primary text-white"
+                      : "bg-red-500 text-white"
+                      }`}
+                  >
                     {user.ativo === "sim" ? "Aprovado" : "Inativo"}
                   </Badge>
                 </CardContent>
@@ -193,10 +213,9 @@ const UsersList = () => {
                 <SelectValue placeholder="Selecione nova permissão" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="usuario">Usuário</SelectItem>
+                <SelectItem value="administrativo">Administrativo</SelectItem>
                 <SelectItem value="tecnico">Técnico</SelectItem>
                 <SelectItem value="coordenacao">Coordenação</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
               </SelectContent>
             </Select>
             <DialogFooter>

@@ -70,7 +70,7 @@ const formatDate = (dateStr?: string) => {
   }
 };
 
-const DashboardAnalitico = () => {
+const DashboardTecnic = () => {
   const navigate = useNavigate();
   const [configs, setConfigs] = useState<Config[]>([]);
   const [loading, setLoading] = useState(true);
@@ -178,16 +178,6 @@ const DashboardAnalitico = () => {
   return (
     <main className="min-h-screen bg-background p-6">
       <div className="container mx-auto max-w-6xl">
-        {/* Navegação */}
-        <Button
-          variant="ghost"
-          onClick={() => navigate(-1)}
-          className="mb-6 flex items-center text-sm font-medium hover:text-primary transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Voltar
-        </Button>
-
 
         {/* Filtros */}
         <section className="flex flex-wrap gap-3 mb-8">
@@ -219,58 +209,7 @@ const DashboardAnalitico = () => {
               </SelectContent>
             </Select>
           </div>
-        </section>
-
-        {/* KPIs */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
-          {/* Total */}
-          <article className="border-none shadow-sm hover:shadow-md transition rounded-xl p-2 text-center">
-            <h2 className="text-lg font-semibold text-blue-700">Total</h2>
-            <div className="mx-auto mt-2 w-2/3 max-w-[200px] aspect-square"> {/* 👈 controla o tamanho */}
-              <CircularProgressbar
-                value={100}
-                text={`${total}`}
-                styles={buildStyles({
-                  textColor: "#1e3a8a",
-                  pathColor: "#3b82f6",
-                  trailColor: "#dbeafe",
-                })}
-              />
-            </div>
-          </article>
-
-          {/* Manobras */}
-          <article className="border-none shadow-sm hover:shadow-md transition rounded-xl p-2 text-center">
-            <h2 className="text-lg font-semibold text-green-700">Manobras</h2>
-            <div className="mx-auto mt-2 w-2/3 max-w-[200px] aspect-square">
-              <CircularProgressbar
-                value={percent(manobras)}
-                text={`${manobras}`}
-                styles={buildStyles({
-                  textColor: "#15803d",
-                  pathColor: "#22c55e",
-                  trailColor: "#dcfce7",
-                })}
-              />
-            </div>
-          </article>
-
-          {/* Configurações Gerais */}
-          <article className="border-none shadow-sm hover:shadow-md transition rounded-xl p-2 text-center">
-            <h2 className="text-lg font-semibold text-purple-700">Config. Gerais</h2>
-            <div className="mx-auto mt-2 w-2/3 max-w-[200px] aspect-square">
-              <CircularProgressbar
-                value={percent(gerais)}
-                text={`${gerais}`}
-                styles={buildStyles({
-                  textColor: "#6b21a8",
-                  pathColor: "#a855f7",
-                  trailColor: "#f3e8ff",
-                })}
-              />
-            </div>
-          </article>
-        </section>
+        </section>    
 
 
         {/* Campo de busca */}
@@ -403,4 +342,4 @@ const DashboardAnalitico = () => {
   );
 };
 
-export default DashboardAnalitico;
+export default DashboardTecnic;

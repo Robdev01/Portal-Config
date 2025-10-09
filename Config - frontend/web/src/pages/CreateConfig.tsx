@@ -12,19 +12,18 @@ import { ArrowLeft, Settings } from "lucide-react";
 const CreateConfig = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    id: "",
-    name: "",
+    id_config: "",
     cliente: "",
-    tipoConfig: "",
-    description: "",
-    obs: "",
+    tipo_config: "",
+    observacao: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.id || !formData.name || !formData.cliente || !formData.tipoConfig || !formData.description) {
+
+    // Validação básica
+    if (!formData.id_config || !formData.cliente || !formData.tipo_config) {
       toast({
         variant: "destructive",
         title: "Erro de validação",
@@ -35,15 +34,40 @@ const CreateConfig = () => {
 
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      // ⚙️ Chamada real para o backend Flask
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/aparelhos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_config: formData.id_config,
+          cliente: formData.cliente,
+          tipo_config: formData.tipo_config,
+          observacao: formData.observacao
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Erro ao criar configuração.");
+      }
+
       toast({
         title: "Configuração criada com sucesso! ✓",
-        description: `${formData.name} foi criada com status "Pendente".`,
+        description: `${formData.id_config} foi criada com status "Pendente".`,
       });
+
       navigate("/pending-configs");
-    }, 1000);
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao salvar configuração",
+        description: error.message || "Erro inesperado ao tentar criar configuração.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -51,12 +75,13 @@ const CreateConfig = () => {
       <div className="container mx-auto max-w-2xl py-8">
         <Button
           variant="ghost"
-          onClick={() => navigate("/dashboard")}
-          className="mb-6"
+          onClick={() => navigate(-1)}
+          className="mb-6 flex items-center text-sm font-medium hover:text-primary transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Voltar ao Dashboard
+          Voltar
         </Button>
+
 
         <Card className="glow-card border-border/50">
           <CardHeader>
@@ -70,15 +95,16 @@ const CreateConfig = () => {
               </div>
             </div>
           </CardHeader>
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="id">ID *</Label>
+                <Label htmlFor="id_config">ID *</Label>
                 <Input
-                  id="id"
+                  id="id_config"
                   placeholder="Ex: CFG-2025-001"
-                  value={formData.id}
-                  onChange={(e) => setFormData({ ...formData, id: e.target.value })}
+                  value={formData.id_config}
+                  onChange={(e) => setFormData({ ...formData, id_config: e.target.value })}
                   required
                   className="bg-background border-border"
                 />
@@ -97,59 +123,29 @@ const CreateConfig = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="tipoConfig">Tipo da Configuração *</Label>
+                <Label htmlFor="tipo_config">Tipo da Configuração *</Label>
                 <Select
-                  value={formData.tipoConfig}
-                  onValueChange={(value) => setFormData({ ...formData, tipoConfig: value })}
+                  value={formData.tipo_config}
+                  onValueChange={(value) => setFormData({ ...formData, tipo_config: value })}
                   required
                 >
                   <SelectTrigger className="bg-background border-border">
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="rede">Rede</SelectItem>
-                    <SelectItem value="seguranca">Segurança</SelectItem>
-                    <SelectItem value="servidor">Servidor</SelectItem>
-                    <SelectItem value="aplicacao">Aplicação</SelectItem>
-                    <SelectItem value="database">Database</SelectItem>
-                    <SelectItem value="backup">Backup</SelectItem>
-                    <SelectItem value="monitoramento">Monitoramento</SelectItem>
-                    <SelectItem value="outros">Outros</SelectItem>
+                    <SelectItem value="manobra">Manobra</SelectItem>
+                    <SelectItem value="config_geral">Configuração Geral</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="name">Nome da Configuração *</Label>
-                <Input
-                  id="name"
-                  placeholder="Ex: Configuração de Rede Principal"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                  className="bg-background border-border"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Descrição *</Label>
+                <Label htmlFor="observacao">Observações</Label>
                 <Textarea
-                  id="description"
-                  placeholder="Descreva os detalhes da configuração..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  required
-                  className="bg-background border-border min-h-[120px]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="obs">Observações</Label>
-                <Textarea
-                  id="obs"
+                  id="observacao"
                   placeholder="Observações adicionais (opcional)..."
-                  value={formData.obs}
-                  onChange={(e) => setFormData({ ...formData, obs: e.target.value })}
+                  value={formData.observacao}
+                  onChange={(e) => setFormData({ ...formData, observacao: e.target.value })}
                   className="bg-background border-border min-h-[80px]"
                 />
               </div>
@@ -158,25 +154,13 @@ const CreateConfig = () => {
                 <p className="text-sm text-muted-foreground">
                   <strong className="text-foreground">Status Inicial:</strong> Pendente
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  A configuração será criada com status "Pendente" e aguardará aprovação da coordenação.
-                </p>
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate("/dashboard")}
-                  className="flex-1"
-                >
+                <Button type="button" variant="outline" onClick={() => navigate("/dashboard")} className="flex-1">
                   Cancelar
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex-1"
-                >
+                <Button type="submit" disabled={isLoading} className="flex-1">
                   {isLoading ? "Salvando..." : "Salvar Configuração"}
                 </Button>
               </div>

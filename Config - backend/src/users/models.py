@@ -69,7 +69,6 @@ def models_change_permission(re, permissao):
     finally:
         conn.close()
 
-
 def models_insert_user_historic(re):
     conn = get_connection()
     try:
@@ -110,3 +109,4 @@ def models_delete_user(re):
         return False
     finally:
         conn.close()
+
