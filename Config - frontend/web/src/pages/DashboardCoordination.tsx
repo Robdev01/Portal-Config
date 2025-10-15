@@ -1,19 +1,19 @@
 import { Link } from "react-router-dom";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Settings, 
-  FileCheck, 
-  FileClock, 
-  BarChart3, 
+import {
+  Settings,
+  FileCheck,
+  FileClock,
+  BarChart3,
   Users,
-  Columns3, 
+  Columns3,
 } from "lucide-react";
 
 
 const Dashboard = () => {
   const menuItems = [
-       {
+    {
       title: "Perfis de Usuários",
       description: "Listagem dos Usuários",
       icon: Users,
@@ -53,7 +53,7 @@ const Dashboard = () => {
       color: "text-warning",
       bgColor: "bg-[hsl(var(--warning))]/10",
     },
-    
+
     {
       title: "Coordenação",
       description: "Acompanhamento de atividades dos usuários",
@@ -62,20 +62,12 @@ const Dashboard = () => {
       color: "text-accent",
       bgColor: "bg-accent/10",
     },
-    {
-      title: "Perfis de Acesso",
-      description: "Gerenciar perfis e permissões",
-      icon: Users,
-      path: "/profiles",
-      color: "text-muted-foreground",
-      bgColor: "bg-muted",
-    },
-    
+
   ];
 
   return (
     <div className="min-h-screen bg-background">
-     
+
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">

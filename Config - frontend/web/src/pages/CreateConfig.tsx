@@ -16,6 +16,14 @@ const CreateConfig = () => {
     cliente: "",
     tipo_config: "",
     observacao: "",
+    cabo: "",
+    primaria: "",
+    secundaria: "",
+    chat_dani_motivo: "",
+    dgoi: false,
+    cto: false,
+    altas: false,
+    melhoria_hades: false,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,6 +40,12 @@ const CreateConfig = () => {
       return;
     }
 
+    // Concatenando as informações do CARIMBO MANOBRA na observação, caso seja "manobra"
+    let observacaoFinal = formData.observacao;
+    if (formData.tipo_config === "manobra") {
+      observacaoFinal += `\n\nCARIMBO MANOBRA:\nID: ${formData.id_config}\nCABO: ${formData.cabo}\nPRIMARIA: ${formData.primaria}\nSECUNDARIA: ${formData.secundaria}\nCHAT DANI MOTIVO: ${formData.chat_dani_motivo}\nDGOI: ${formData.dgoi ? "Sim" : "Não"}\nCTO: ${formData.cto ? "Sim" : "Não"}\nALTAS: ${formData.altas ? "Sim" : "Não"}\nMELHORIA/HADES: ${formData.melhoria_hades ? "Sim" : "Não"}`;
+    }
+
     setIsLoading(true);
 
     try {
@@ -43,7 +57,7 @@ const CreateConfig = () => {
           id_config: formData.id_config,
           cliente: formData.cliente,
           tipo_config: formData.tipo_config,
-          observacao: formData.observacao
+          observacao: observacaoFinal, // Enviando a observação concatenada
         }),
       });
 
@@ -82,7 +96,6 @@ const CreateConfig = () => {
           Voltar
         </Button>
 
-
         <Card className="glow-card border-border/50">
           <CardHeader>
             <div className="flex items-center gap-3 mb-2">
@@ -102,7 +115,7 @@ const CreateConfig = () => {
                 <Label htmlFor="id_config">ID *</Label>
                 <Input
                   id="id_config"
-                  placeholder="Ex: CFG-2025-001"
+                  placeholder="Ex: 000000000"
                   value={formData.id_config}
                   onChange={(e) => setFormData({ ...formData, id_config: e.target.value })}
                   required
@@ -139,6 +152,94 @@ const CreateConfig = () => {
                 </Select>
               </div>
 
+              {/* Exibe os campos adicionais se for "manobra" */}
+              {formData.tipo_config === "manobra" && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="cabo">CABO</Label>
+                    <Input
+                      id="cabo"
+                      value={formData.cabo}
+                      onChange={(e) => setFormData({ ...formData, cabo: e.target.value })}
+                      className="bg-background border-border"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="primaria">PRIMARIA</Label>
+                    <Input
+                      id="primaria"
+                      value={formData.primaria}
+                      onChange={(e) => setFormData({ ...formData, primaria: e.target.value })}
+                      className="bg-background border-border"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="secundaria">SECUNDARIA</Label>
+                    <Input
+                      id="secundaria"
+                      value={formData.secundaria}
+                      onChange={(e) => setFormData({ ...formData, secundaria: e.target.value })}
+                      className="bg-background border-border"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="chat_dani_motivo">CHAT DANI MOTIVO</Label>
+                    <Textarea
+                      id="chat_dani_motivo"
+                      value={formData.chat_dani_motivo}
+                      onChange={(e) => setFormData({ ...formData, chat_dani_motivo: e.target.value })}
+                      className="bg-background border-border"
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex flex-col">
+                      <Label>DGOI</Label>
+                      <input
+                        type="checkbox"
+                        checked={formData.dgoi}
+                        onChange={() => setFormData({ ...formData, dgoi: !formData.dgoi })}
+                        className="bg-background border-border rounded w-5 h-5 mt-1"
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <Label>CTO</Label>
+                      <input
+                        type="checkbox"
+                        checked={formData.cto}
+                        onChange={() => setFormData({ ...formData, cto: !formData.cto })}
+                        className="bg-background border-border rounded w-5 h-5 mt-1"
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <Label>ALTAS</Label>
+                      <input
+                        type="checkbox"
+                        checked={formData.altas}
+                        onChange={() => setFormData({ ...formData, altas: !formData.altas })}
+                        className="bg-background border-border rounded w-5 h-5 mt-1"
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <Label>MELHORIA/HADES</Label>
+                      <input
+                        type="checkbox"
+                        checked={formData.melhoria_hades}
+                        onChange={() => setFormData({ ...formData, melhoria_hades: !formData.melhoria_hades })}
+                        className="bg-background border-border rounded w-5 h-5 mt-1"
+                      />
+                    </div>
+                  </div>
+
+                </>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="observacao">Observações</Label>
                 <Textarea
@@ -157,7 +258,7 @@ const CreateConfig = () => {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={() => navigate("/dashboard")} className="flex-1">
+                <Button type="button" variant="outline" onClick={() => navigate(-1)} className="flex-1">
                   Cancelar
                 </Button>
                 <Button type="submit" disabled={isLoading} className="flex-1">

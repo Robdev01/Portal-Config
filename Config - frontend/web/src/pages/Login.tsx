@@ -82,10 +82,6 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-background via-card to-background" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.1),transparent_50%)]" />
-
-
-
-
       <Card className="w-full max-w-md relative glow-card  border border-border/50 bg-card/50 backdrop-blur-lg shadow-lg">
         <CardHeader className="text-center space-y-2">
           <figure

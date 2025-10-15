@@ -56,14 +56,7 @@ const Dashboard = () => {
       bgColor: "bg-[hsl(var(--warning))]/10",
     },
     
-    {
-      title: "Configurações Aprovadas ",
-      description: "Visualizar configurações aprovadas",
-      icon: FileCheck,
-      path: "/approved-configs",
-      color: "text-[hsl(var(--success))]",
-      bgColor: "bg-[hsl(var(--success))]/10",
-    },
+   
     {
       title: "Relatório da Coordenação",
       description: "Acompanhamento de atividades dos usuários",
@@ -72,14 +65,7 @@ const Dashboard = () => {
       color: "text-accent",
       bgColor: "bg-accent/10",
     },
-    {
-      title: "Perfis de Acesso",
-      description: "Gerenciar perfis e permissões",
-      icon: Users,
-      path: "/profiles",
-      color: "text-muted-foreground",
-      bgColor: "bg-muted",
-    },
+  
     
   ];
 

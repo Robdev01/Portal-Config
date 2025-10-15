@@ -32,7 +32,7 @@ const RegisterUser = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!formData.name || !formData.re || !formData.password || !formData.confirmPassword || !formData.profile) {
       toast({
         variant: "destructive",
@@ -41,7 +41,17 @@ const RegisterUser = () => {
       });
       return;
     }
-
+  
+    // 🔒 Validação de tamanho mínimo da senha
+    if (formData.password.length < 8) {
+      toast({
+        variant: "destructive",
+        title: "Senha muito curta",
+        description: "A senha deve conter no mínimo 8 caracteres.",
+      });
+      return;
+    }
+  
     if (formData.password !== formData.confirmPassword) {
       toast({
         variant: "destructive",
@@ -50,9 +60,9 @@ const RegisterUser = () => {
       });
       return;
     }
-
+  
     setIsLoading(true);
-
+  
     try {
       const resp = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
         method: "POST",
@@ -64,16 +74,13 @@ const RegisterUser = () => {
           permissao: formData.profile,
         }),
       });
-
+  
       const data = await resp.json();
-
-      if (!resp.ok) {
-        throw data.message || "Erro ao cadastrar usuário.";
-      }
-
+  
+      if (!resp.ok) throw data.message || "Erro ao cadastrar usuário.";
+  
       // ✅ abre o modal em vez de redirecionar
       setShowModal(true);
-
     } catch (err: any) {
       toast({
         variant: "destructive",
@@ -84,6 +91,7 @@ const RegisterUser = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <>
@@ -140,7 +148,7 @@ const RegisterUser = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="tecnico">Técnico</SelectItem>
-                      <SelectItem value="administrativo">Administrativo</SelectItem>
+                      <SelectItem value="escritorio">Administrativo</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

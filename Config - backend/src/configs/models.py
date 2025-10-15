@@ -187,41 +187,121 @@ def models_get_pendentes_manobra():
     finally:
         conn.close()
 
-def models_assumir_aparelho(id, re_assumiu):
+def models_assumir_aparelho(id_config, re_assumiu):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            sql = """
+            # 1️⃣ Atualiza a configuração principal
+            sql_update = """
                 UPDATE aparelho_configuracao
                 SET re_assumiu = %s,
                     dt_assumiu = NOW(),
-                    status = 'em_andamento',
-                    dt_atualizacao = NOW()
+                    status = 'em_andamento'
                 WHERE id = %s
             """
-            cursor.execute(sql, (re_assumiu, id))
+            cursor.execute(sql_update, (re_assumiu, id_config))
+
+            # 2️⃣ Insere o registro histórico na tabela perfil_execucao
+            sql_insert = """
+                INSERT INTO perfil_execucao (id_config, re_assumiu, dt_assumiu)
+                VALUES (%s, %s, NOW())
+            """
+            cursor.execute(sql_insert, (id_config, re_assumiu))
+
         conn.commit()
-        return cursor.rowcount > 0
+        return True
     except Exception as e:
         print("Erro ao assumir aparelho:", e)
+        conn.rollback()
         return False
     finally:
         conn.close()
 
-def models_update_finalizacao(id, dt_finalizou):
+
+def models_update_finalizacao(id_config, dt_finalizou):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            # 1️⃣ Atualiza status principal
+            sql_update_main = """
+                UPDATE aparelho_configuracao
+                SET status = 'finalizado',
+                    dt_finalizou = %s
+                WHERE id = %s
+            """
+            cursor.execute(sql_update_main, (dt_finalizou, id_config))
+
+            # 2️⃣ Atualiza o último registro de execução desse id_config
+            sql_update_exec = """
+                UPDATE perfil_execucao
+                SET dt_finalizou = %s
+                WHERE id_config = %s AND dt_finalizou IS NULL
+                ORDER BY dt_assumiu DESC
+                LIMIT 1
+            """
+            cursor.execute(sql_update_exec, (dt_finalizou, id_config))
+
+        conn.commit()
+        return True
+    except Exception as e:
+        print("Erro ao finalizar configuração:", e)
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
+
+def models_get_aparelho_config(period="all"):
+    """
+    Retorna as configurações de aparelhos conforme o período solicitado:
+      - period="current_month" → Mês atual
+      - period="last_3_months" → Últimos 3 meses
+      - period="all" → Todos os registros
+    """
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
             sql = """
-                UPDATE aparelho_configuracao
-                SET status = 'finalizado', dt_finalizou = %s
-                WHERE id = %s
+                SELECT 
+                    a.id,
+                    a.id_config,
+                    a.cliente,
+                    a.tipo_config,
+                    a.status,
+                    a.observacao,
+                    a.dt_cadastro,
+                    a.dt_assumiu,
+                    a.dt_finalizou,
+                    a.re_assumiu,
+                    u.nome AS nome_responsavel
+                FROM aparelho_configuracao a
+                LEFT JOIN usuarios u ON a.re_assumiu = u.re
+                WHERE 1=1
             """
-            cursor.execute(sql, (dt_finalizou, id))
-        conn.commit()
-        return True
+
+            # =========================
+            # FILTROS POR PERÍODO
+            # =========================
+            if period == "current_month":
+                sql += " AND MONTH(a.dt_cadastro) = MONTH(CURDATE()) AND YEAR(a.dt_cadastro) = YEAR(CURDATE())"
+            elif period == "last_3_months":
+                sql += " AND a.dt_cadastro >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)"
+            # Se for "all", não aplica nenhum filtro
+
+            sql += " ORDER BY a.dt_cadastro DESC"
+
+            cursor.execute(sql)
+
+            # Converter o retorno em lista de dicionários (compatível com PyMySQL)
+            columns = [col[0] for col in cursor.description]
+            data = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+            print(f">>> Buscando aparelhos (período={period}) - Registros encontrados: {len(data)}")
+            return data
+
     except Exception as e:
-        print("Erro ao atualizar finalização:", e)
-        return False
+        print("Erro ao buscar aparelho_configuracao:", e)
+        return []
     finally:
         conn.close()
+

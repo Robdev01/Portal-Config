@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
@@ -44,6 +45,7 @@ const PendingManobras = () => {
   // modal states
   const [editingConfig, setEditingConfig] = useState<Config | null>(null);
   const [editCliente, setEditCliente] = useState("");
+  const [editObservacao, setEditObservacao] = useState("");
   const [editTipo, setEditTipo] = useState("");
   const [editStatus, setEditStatus] = useState("");
 
@@ -189,6 +191,7 @@ const PendingManobras = () => {
     setEditCliente(config.cliente);
     setEditTipo(config.tipo_config);
     setEditStatus(config.status);
+    setEditObservacao(config.observacao || "");
   };
 
   const handleSaveEdit = async () => {
@@ -201,6 +204,7 @@ const PendingManobras = () => {
           cliente: editCliente,
           tipo_config: editTipo,
           status: editStatus,
+          observacao: editObservacao, // Envia a observação editada com as quebras de linha
         }),
       });
       const data = await resp.json();
@@ -208,7 +212,7 @@ const PendingManobras = () => {
       setConfigs((prev) =>
         prev.map((c) =>
           c.id === editingConfig.id
-            ? { ...c, cliente: editCliente, tipo_config: editTipo, status: editStatus }
+            ? { ...c, cliente: editCliente, tipo_config: editTipo, status: editStatus, observacao: editObservacao }
             : c
         )
       );
@@ -222,6 +226,7 @@ const PendingManobras = () => {
       });
     }
   };
+
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -302,8 +307,8 @@ const PendingManobras = () => {
                   <Card
                     key={config.id}
                     className={`border border-border rounded-xl shadow-sm transition-all duration-200 ${config._removing
-                        ? "opacity-50 scale-[0.98] pointer-events-none"
-                        : "hover:shadow-md hover:border-primary/50"
+                      ? "opacity-50 scale-[0.98] pointer-events-none"
+                      : "hover:shadow-md hover:border-primary/50"
                       }`}
                   >
                     <CardHeader className="flex flex-row items-start justify-between pb-3">
@@ -333,12 +338,12 @@ const PendingManobras = () => {
                           <strong>Status:</strong>{" "}
                           <span
                             className={`font-semibold ${config.status === "finalizado"
-                                ? "text-green-600"
-                                : config.status === "em_andamento"
-                                  ? "text-yellow-600"
-                                  : config.status === "pendente"
-                                    ? "text-red-600"
-                                    : "text-muted-foreground"
+                              ? "text-green-600"
+                              : config.status === "em_andamento"
+                                ? "text-yellow-600"
+                                : config.status === "pendente"
+                                  ? "text-red-600"
+                                  : "text-muted-foreground"
                               }`}
                           >
                             {config.status.charAt(0).toUpperCase() +
@@ -357,12 +362,12 @@ const PendingManobras = () => {
                       {/* Bolinha indicativa de status */}
                       <div
                         className={`w-3 h-3 rounded-full mt-2 ml-3 ${config.status === "finalizado"
-                            ? "bg-green-500"
-                            : config.status === "em_andamento"
-                              ? "bg-yellow-400"
-                              : config.status === "pendente"
-                                ? "bg-red-500"
-                                : "bg-gray-400"
+                          ? "bg-green-500"
+                          : config.status === "em_andamento"
+                            ? "bg-yellow-400"
+                            : config.status === "pendente"
+                              ? "bg-red-500"
+                              : "bg-gray-400"
                           }`}
                       />
                     </CardHeader>
@@ -433,7 +438,7 @@ const PendingManobras = () => {
 
       {/* Modal de edição */}
       <Dialog open={!!editingConfig} onOpenChange={() => setEditingConfig(null)}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-3xl w-full max-w-full overflow-y-auto max-h-[80vh]">
           <DialogHeader>
             <DialogTitle>Editar Manobra</DialogTitle>
           </DialogHeader>
@@ -500,6 +505,17 @@ const PendingManobras = () => {
                     <SelectItem value="cancelado">Cancelado</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Observação</label>
+                  <Textarea
+                    value={editObservacao}
+                    onChange={(e) => setEditObservacao(e.target.value)} // Atualiza a observação ao editar
+                    className="bg-background border-border min-h-[150px] whitespace-pre-line"
+                  />
+                </div>
               </div>
             </div>
           )}

@@ -16,6 +16,38 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `aparelho_configuracao`
+--
+
+DROP TABLE IF EXISTS `aparelho_configuracao`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `aparelho_configuracao` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_config` varchar(100) NOT NULL,
+  `cliente` varchar(150) NOT NULL,
+  `tipo_config` varchar(100) NOT NULL,
+  `status` enum('pendente','em_andamento','finalizado','cancelado') DEFAULT 'pendente',
+  `observacao` text DEFAULT NULL,
+  `dt_cadastro` datetime DEFAULT current_timestamp(),
+  `dt_atualizacao` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `re_assumiu` varchar(50) DEFAULT NULL,
+  `dt_assumiu` datetime DEFAULT NULL,
+  `dt_finalizou` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aparelho_configuracao`
+--
+
+LOCK TABLES `aparelho_configuracao` WRITE;
+/*!40000 ALTER TABLE `aparelho_configuracao` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aparelho_configuracao` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `historico_login_vivoconfig`
 --
 
@@ -26,9 +58,8 @@ CREATE TABLE `historico_login_vivoconfig` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `re` varchar(30) NOT NULL,
   `dt_login` datetime NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `re` (`re`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,8 +68,36 @@ CREATE TABLE `historico_login_vivoconfig` (
 
 LOCK TABLES `historico_login_vivoconfig` WRITE;
 /*!40000 ALTER TABLE `historico_login_vivoconfig` DISABLE KEYS */;
-INSERT INTO `historico_login_vivoconfig` VALUES (1,'re003','2025-10-02 16:24:47'),(2,'80999282','2025-10-02 17:04:28');
+INSERT INTO `historico_login_vivoconfig` VALUES (1,'80999282','2025-10-15 13:04:43'),(2,'80999282','2025-10-15 13:10:16'),(3,'80999282','2025-10-15 13:20:07');
 /*!40000 ALTER TABLE `historico_login_vivoconfig` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `perfil_execucao`
+--
+
+DROP TABLE IF EXISTS `perfil_execucao`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `perfil_execucao` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_config` int(11) NOT NULL,
+  `re_assumiu` varchar(50) NOT NULL,
+  `dt_assumiu` datetime NOT NULL DEFAULT current_timestamp(),
+  `dt_finalizou` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_config` (`id_config`),
+  CONSTRAINT `perfil_execucao_ibfk_1` FOREIGN KEY (`id_config`) REFERENCES `aparelho_configuracao` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `perfil_execucao`
+--
+
+LOCK TABLES `perfil_execucao` WRITE;
+/*!40000 ALTER TABLE `perfil_execucao` DISABLE KEYS */;
+/*!40000 ALTER TABLE `perfil_execucao` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -58,7 +117,7 @@ CREATE TABLE `usuarios` (
   `ativo` enum('sim','nao') NOT NULL DEFAULT 'nao',
   PRIMARY KEY (`id`),
   UNIQUE KEY `re` (`re`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +126,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Usuário 1','re001','senha001','usuario','2025-10-02 13:34:54','sim'),(2,'Usuário 2','re002','senha002','admin','2025-10-02 13:34:56','sim'),(3,'Usuário 3','re003','senha003','coordenador','2025-10-02 13:34:58','sim'),(4,'Usuário 4','re004','senha004','coordenador','2025-10-02 13:35:00','sim'),(5,'Usuário 5','re005','senha005','admin','2025-10-02 13:35:02','sim'),(6,'Usuário 6','re006','senha006','admin','2025-10-02 13:35:04','sim'),(7,'Usuário 7','re007','senha007','coordenador','2025-10-02 13:35:06','sim'),(8,'Usuário 8','re008','senha008','usuario','2025-10-02 13:35:08','sim'),(9,'Usuário 9','re009','senha009','admin','2025-10-02 13:35:10','sim'),(10,'Usuário 10','re010','senha010','usuario','2025-10-02 13:35:12','sim'),(11,'Usuário 11','re011','senha011','usuario','2025-10-02 13:35:14','sim'),(12,'Usuário 12','re012','senha012','coordenador','2025-10-02 13:50:41','sim'),(13,'Usuário 13','re013','senha013','coordenador','2025-10-02 13:50:43','sim'),(14,'Usuário 14','re014','senha014','admin','2025-10-02 13:50:45','sim'),(15,'Usuário 15','re015','senha015','admin','2025-10-02 13:50:47','sim'),(16,'Usuário 16','re016','senha016','usuario','2025-10-02 13:50:50','sim'),(17,'Usuário 17','re017','senha017','coordenador','2025-10-02 13:50:52','sim'),(18,'Usuário 18','re018','senha018','admin','2025-10-02 13:50:54','sim'),(19,'Usuário 19','re019','senha019','coordenador','2025-10-02 13:50:56','sim'),(21,'Robson','80999282','12','escritorio','2025-10-02 16:33:52','sim'),(22,'Robson','123456','1','escritorio','2025-10-02 17:17:12','nao');
+INSERT INTO `usuarios` VALUES (1,'Robson Calheira','80999282','Vivo@123','administrativo','2025-10-15 13:00:51','sim'),(2,'Teste','123456','12345678','escritorio','2025-10-15 13:08:02','sim'),(3,'Mirelle ','R3388808','Vivo@123','coordenacao','2025-10-15 13:18:45','sim'),(4,'Renato Brandão','R328071','Vivo@123','coordenacao','2025-10-15 13:19:22','sim');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -80,4 +139,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-02 17:43:45
+-- Dump completed on 2025-10-15 13:31:56

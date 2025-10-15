@@ -213,7 +213,7 @@ const UsersList = () => {
                 <SelectValue placeholder="Selecione nova permissão" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="administrativo">Administrativo</SelectItem>
+                <SelectItem value="escritorio">Administrativo</SelectItem>
                 <SelectItem value="tecnico">Técnico</SelectItem>
                 <SelectItem value="coordenacao">Coordenação</SelectItem>
               </SelectContent>

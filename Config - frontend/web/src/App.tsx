@@ -8,9 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import RegisterUser from "./pages/RegisterUser";
 import CreateConfig from "./pages/CreateConfig";
 import PendingConfigs from "./pages/PendingConfigs";
-import ApprovedConfigs from "./pages/ApprovedConfigs";
 import CoordinationReport from "./pages/CoordinationReport";
-import Profiles from "./pages/Profiles";
 import TechnicianDashboard from "./pages/TechnicianDashboard";
 import OfficeDashboard from "./pages/OfficeDashboard";
 import CoordinationDashboard from "./pages/CoordinationDashboard";
@@ -25,6 +23,7 @@ import PendingConfigGeral from "./pages/PendingConfigGeral"
 import DashboardCoordination from "./pages/DashboardCoordination"
 import DashboardAdmin from "./pages/DashboardAdmin"
 import DashboardTecnic from "./pages/DashboardTecnic"
+import ReportErrorPage from "./pages/ReportErrorPage";
 
 
 import PrivateRoute from "./pages/PrivateRoute";
@@ -38,12 +37,11 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Login não usa layout */}
+          {/* ========== ROTAS PÚBLICAS ========== */}
           <Route path="/" element={<Login />} />
-          <Route path="/register-user" 
-          element={<RegisterUser />}
-           />
+          <Route path="/register-user" element={<RegisterUser />} />
 
+          {/* ========== LAYOUT: TÉCNICO ========== */}
           <Route element={<AppLayoutTec />}>
             <Route
               path="/dashboard-tecnic"
@@ -55,56 +53,122 @@ const App = () => (
             />
           </Route>
 
+          {/* ========== LAYOUT: COORDENAÇÃO ========== */}
           <Route element={<AppLayoutCoord />}>
-          <Route 
-            path="/dashboard-coordination" 
-            element={
-            <PrivateRoute> 
-              <DashboardCoordination />
-            </PrivateRoute>} /> 
-            
-          </Route>
-
-          <Route element={<AppLayoutAdmin />}>
-          <Route 
-            path="/dashboard-admin" 
-            element={
-            <PrivateRoute> 
-              <DashboardAdmin />
-            </PrivateRoute>} /> 
-            
-          </Route>
-          
-          {/* Páginas com Navbar */}
-          <Route element={<AppLayout />}>
-            <Route 
-              path="/dashboard" 
+            <Route
+              path="/dashboard-coordination"
               element={
-                <PrivateRoute> 
-                  <Dashboard /> 
-                </PrivateRoute>} />
-            </Route>
+                <PrivateRoute>
+                  <DashboardCoordination />
+                </PrivateRoute>
+              }
+            />
+          </Route>
 
+          {/* ========== LAYOUT: ADMIN ========== */}
+          <Route element={<AppLayoutAdmin />}>
+            <Route
+              path="/dashboard-admin"
+              element={
+                <PrivateRoute>
+                  <DashboardAdmin />
+                </PrivateRoute>
+              }
+            />
+          </Route>
 
+          {/* ========== LAYOUT: PADRÃO (NAVBAR ETC) ========== */}
+          <Route element={<AppLayout />}>
+            {/* Painéis principais */}
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/create-config"
+              element={
+                <PrivateRoute>
+                  <CreateConfig />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/pending-configs"
+              element={
+                <PrivateRoute>
+                  <PendingConfigs />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/coordination-report"
+              element={
+                <PrivateRoute>
+                  <CoordinationReport />
+                </PrivateRoute>
+              }
+            />
 
-            <Route path="/create-config" element={<PrivateRoute> <CreateConfig /></PrivateRoute>} />
-            <Route path="/dashboard-admin" element={<PrivateRoute> <DashboardAdmin /></PrivateRoute>} />
-            <Route path="/dashboard-coordination" element={<PrivateRoute> <DashboardCoordination /></PrivateRoute>} />
-            
-            <Route path="/pending-configs" element={<PendingConfigs />} />
-            <Route path="/approved-configs" element={<ApprovedConfigs />} />
-            <Route path="/coordination-report" element={<CoordinationReport />} />
-            <Route path="/profiles" element={<Profiles />} />
+            {/* Seções de controle */}
+            <Route
+              path="/office"
+              element={
+                <PrivateRoute>
+                  <OfficeDashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/coordination"
+              element={
+                <PrivateRoute>
+                  <CoordinationDashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/user-list"
+              element={
+                <PrivateRoute>
+                  <UsersList />
+                </PrivateRoute>
+              }
+            />
 
+            {/* Pendências */}
+            <Route
+              path="/pending-manobras"
+              element={
+                <PrivateRoute>
+                  <PendingManobras />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/pending-config-geral"
+              element={
+                <PrivateRoute>
+                  <PendingConfigGeral />
+                </PrivateRoute>
+              }
+            />
 
-            <Route path="/office" element={<OfficeDashboard />} />
-            <Route path="/coordination" element={<CoordinationDashboard />} />
-            <Route path="/user-list" element={<UsersList />} />
-            <Route path="/pending-manobras" element={<PendingManobras />} />
-            <Route path="/pending-config-geral" element={<PendingConfigGeral />} />
-          
+            {/* Reportar erro / suporte */}
+            <Route
+              path="/report-error"
+              element={
+                <PrivateRoute>
+                  <ReportErrorPage />
+                </PrivateRoute>
+              }
+            />
+          </Route>
 
-          {/* Página 404 */}
+          {/* ========== PÁGINA 404 ========== */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -10,20 +10,27 @@ from src.configs.models import (
     models_get_pendentes_config_geral,
     models_assumir_aparelho,
     models_update_finalizacao,
+    models_get_aparelho_config,
 
 )
 from src.services.telegram_service import send_telegram_message
-
+from src.services.report_gmail import send_email
 
 def controller_create_aparelho_config(data):
     # Validação dos campos obrigatórios
     if not data.get("id_config") or not data.get("cliente") or not data.get("tipo_config"):
         return {"message": "Campos obrigatórios ausentes"}, 400
 
+    # Tratar o tipo_config para valores amigáveis
+    if data["tipo_config"] == "config_geral":
+        data["tipo_config"] = "Configuração Geral"
+    elif data["tipo_config"] == "manobra":
+        data["tipo_config"] = "Manobra"
+
     sucesso = models_insert_aparelho_config(
         data["id_config"],
         data["cliente"],
-        data["tipo_config"],
+        data["tipo_config"],  # Agora já vem como "Configuração Geral" ou "Manobra"
         data.get("re_assumiu"),
         data.get("observacao"),
     )
@@ -31,7 +38,7 @@ def controller_create_aparelho_config(data):
     if sucesso:
         # Monta a mensagem de notificação
         mensagem = (
-            f"----- Nova configuração cadastrada! -----\n\n"
+            f"<strong> Nova configuração cadastrada! </strong>\n\n"
             f"ID: {data['id_config']}\n"
             f"Cliente: {data['cliente']}\n"
             f"Tipo: {data['tipo_config']}\n"
@@ -104,3 +111,33 @@ def controller_finalizar_configuracao(id):
     if models_update_finalizacao(id, dt_finalizou):
         return {"message": "Configuração finalizada com sucesso"}, 200
     return {"message": "Erro ao finalizar configuração"}, 500
+
+def controller_get_aparelho_config(period="all"):
+    data = models_get_aparelho_config(period)
+    if not data:
+        return {"message": "Nenhum dado encontrado"}, 404
+    return {"aparelhos": data}, 200
+
+def controller_reportar_erro(data):
+    assunto = data.get("assunto")
+    descricao = data.get("descricao")
+    usuario = data.get("usuario")  # opcional
+
+    if not assunto or not descricao:
+        return {"message": "Assunto e descrição são obrigatórios"}, 400
+
+    # Corpo das mensagens
+    corpo_email = f"Usuário: {usuario or 'Não informado'}\n\nAssunto: {assunto}\n\nDescrição:\n{descricao}"
+    telegram_text = f"🛠️ *Novo relatório de erro:*\n👤 Usuário: {usuario or 'Não informado'}\n🧩 Assunto: {assunto}\n📝 {descricao}"
+
+    # Enviar email
+    lista_dest = ["suporte@empresa.com", "outro@empresa.com"]  # ajuste conforme sua equipe
+    sucesso_email = send_email(assunto, corpo_email, lista_dest)
+
+    # Enviar
+    sucesso_telegram = send_telegram_message(telegram_text)
+
+    if sucesso_email or sucesso_telegram:
+        return {"message": "Relatório enviado com sucesso"}, 200
+    else:
+        return {"message": "Falha ao enviar relatório"}, 500
