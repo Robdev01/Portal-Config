@@ -28,6 +28,8 @@ type Config = {
   tipo_config: string;
   observacao?: string;
   re_assumiu?: string;
+  re_cadastrou?: string,
+  nome_cadastrou?: string,
   nome_responsavel?: string;
   status: string;
   dt_cadastro: string;
@@ -39,6 +41,9 @@ type Config = {
 const PendingManobras = () => {
   const navigate = useNavigate();
   const [configs, setConfigs] = useState<Config[]>([]);
+  const usuarioRaw = localStorage.getItem("user");
+  const usuario = usuarioRaw ? JSON.parse(usuarioRaw) : null;
+  const re = usuario?.re || null;
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -139,41 +144,62 @@ const PendingManobras = () => {
   };
 
   // 🔹 Finalizar (feito)
-  const handleMarkAsDone = async (id: string) => {
-    try {
-      const now = new Date().toISOString();
-
-      const resp = await fetch(`${import.meta.env.VITE_API_URL}/aparelhos/finalizar/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dt_finalizou: now }),
-      });
-
-      const data = await resp.json();
-      if (!resp.ok) throw new Error(data.message || "Erro ao finalizar manobra.");
-
-      setConfigs((prev) =>
-        prev.map((c) =>
-          c.id === id ? { ...c, status: "finalizado", dt_finalizou: now, _removing: true } : c
-        )
-      );
-
-      setTimeout(() => {
-        setConfigs((prev) => prev.filter((c) => c.id !== id));
-      }, 500);
-
-      toast({
-        title: "Manobra finalizada ✓",
-        description: `A manobra ${id} foi marcada como concluída.`,
-      });
-    } catch (err: any) {
+  const handleMarkAsDone = async (id: string, config: Config) => {
+    const configToFinalize = configs.find((config) => config.id === id);
+    if (configToFinalize && !configToFinalize.re_assumiu) {
       toast({
         variant: "destructive",
         title: "Erro ao finalizar",
-        description: err.message || "Erro inesperado.",
+        description: "Esta configuração precisa ser assumida antes de ser finalizada.",
+      });
+      return; // Não permite concluir a tarefa se não tiver sido assumida
+    }
+    try {
+      const now = new Date().toISOString();
+
+      // Enviar os dados para a rota de finalização e criação de uma nova configuração geral
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/finalizar_manobra/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dt_finalizou: now }), // Passando a data de finalização
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Erro ao finalizar manobra.");
+
+      const responseCreate = await fetch(`${import.meta.env.VITE_API_URL}/aparelhos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_config: config.id_config,  // Passando o mesmo ID de configuração
+          cliente: config.cliente,
+          tipo_config: "Configuração Geral",  // Novo tipo de configuração
+          re_cadastrou: re,  // Usando o RE do usuário logado
+          
+        }),
+      });
+
+      const createData = await responseCreate.json();
+      if (!responseCreate.ok) throw new Error(createData.message || "Erro ao criar configuração geral.");
+
+      // Atualiza o estado para remover a manobra da lista
+      setConfigs((prev) =>
+        prev.filter((c) => c.id !== id)
+      );
+
+      toast({
+        title: "Manobra finalizada e configuração criada!",
+        description: "A manobra foi finalizada e a nova configuração geral foi criada com sucesso.",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao finalizar manobra",
+        description: error.message || "Erro inesperado.",
       });
     }
   };
+
 
   // 🔹 Rejeitar
   const handleReject = (id: string) => {
@@ -379,6 +405,10 @@ const PendingManobras = () => {
                           <strong>Cadastro:</strong> {formatDate(config.dt_cadastro)}
                         </div>
                         <div>
+                          <strong>Cadastrado por:</strong>{" "}
+                          {config.nome_cadastrou || config.re_cadastrou || "—"}
+                        </div>
+                        <div>
                           <strong>Assumido:</strong> {formatDate(config.dt_assumiu)}
                         </div>
                         <div>
@@ -420,12 +450,13 @@ const PendingManobras = () => {
 
                         <Button
                           size="sm"
-                          onClick={() => handleMarkAsDone(config.id)}
+                          onClick={() => handleMarkAsDone(config.id, config)} // Passando os dados da manobra para a função
                           className="bg-green-600 hover:bg-green-700 text-white transition-colors"
                         >
                           <Check className="w-4 h-4 mr-1" />
                           Concluir
                         </Button>
+
                       </div>
                     </CardContent>
                   </Card>

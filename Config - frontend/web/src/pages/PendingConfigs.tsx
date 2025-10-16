@@ -27,6 +27,7 @@ type Config = {
   tipo_config: string;
   observacao?: string;
   nome_responsavel?: string;
+  nome_cadastrou?: string;
   status: "pendente" | "em_andamento" | "finalizado" | "cancelado";
   dt_cadastro: string;
   dt_assumiu?: string;
@@ -98,6 +99,7 @@ const DashboardAnalitico = () => {
           observacao: item.observacao,
           nome_responsavel: item.nome_responsavel || item.re_assumiu,
           status: item.status,
+          nome_cadastrou:item.nome_cadastrou || item.re_cadastrou,
           dt_cadastro: item.dt_cadastro,
           dt_assumiu: item.dt_assumiu,
           dt_finalizou: item.dt_finalizou,
@@ -145,8 +147,8 @@ const DashboardAnalitico = () => {
   }, [configs, filtroMes, filtroTipo, searchTerm]);
 
   const total = filtradas.length;
-  const manobras = filtradas.filter((c) => c.tipo_config === "manobra").length;
-  const gerais = filtradas.filter((c) => c.tipo_config === "config_geral").length;
+  const manobras = filtradas.filter((c) => c.tipo_config === "Manobra").length;
+  const gerais = filtradas.filter((c) => c.tipo_config === "Configuração Geral").length;
   const percent = (valor: number) => (total > 0 ? Math.round((valor / total) * 100) : 0);
 
   // Busca detalhes ao clicar em visualizar
@@ -331,6 +333,10 @@ const DashboardAnalitico = () => {
                         <dd>{formatDate(config.dt_cadastro)}</dd>
                       </div>
                       <div>
+                        <dt className="font-semibold">Cadastrado por:</dt>
+                        <dd>{config.nome_cadastrou || "—"}</dd>
+                      </div>
+                      <div>
                         <dt className="font-semibold">Assumido:</dt>
                         <dd>{formatDate(config.dt_assumiu)}</dd>
                       </div>
@@ -378,7 +384,8 @@ const DashboardAnalitico = () => {
               <p><strong>Cliente:</strong> {selectedConfig?.cliente}</p>
               <p><strong>Status:</strong> {selectedConfig?.status}</p>
               <p><strong>Tipo:</strong> {selectedConfig?.tipo_config}</p>
-              <p><strong>Que assumiu:</strong> {selectedConfig?.nome_responsavel || "—"}</p>
+              <p><strong>Quem cadastrou:</strong> {selectedConfig?.nome_cadastrou || "—"}</p>
+              <p><strong>Quem assumiu:</strong> {selectedConfig?.nome_responsavel || "—"}</p>
               <p><strong>Cadastro:</strong> {formatDate(selectedConfig?.dt_cadastro)}</p>
               <p><strong>Assumido:</strong> {formatDate(selectedConfig?.dt_assumiu)}</p>
               <p><strong>Finalizado:</strong> {formatDate(selectedConfig?.dt_finalizou)}</p>

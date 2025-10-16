@@ -26,7 +26,9 @@ const CreateConfig = () => {
     melhoria_hades: false,
   });
   const [isLoading, setIsLoading] = useState(false);
-
+  const usuarioRaw = localStorage.getItem("user");
+  const usuario = usuarioRaw ? JSON.parse(usuarioRaw) : null;
+  const re = usuario?.re || null;
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -57,6 +59,7 @@ const CreateConfig = () => {
           id_config: formData.id_config,
           cliente: formData.cliente,
           tipo_config: formData.tipo_config,
+          re_cadastrou: re,
           observacao: observacaoFinal, // Enviando a observação concatenada
         }),
       });
@@ -83,6 +86,7 @@ const CreateConfig = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-background p-4">

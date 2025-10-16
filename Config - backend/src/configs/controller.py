@@ -11,10 +11,13 @@ from src.configs.models import (
     models_assumir_aparelho,
     models_update_finalizacao,
     models_get_aparelho_config,
+    models_update_manobra_status
 
 )
 from src.services.telegram_service import send_telegram_message
 from src.services.report_gmail import send_email
+
+from flask import jsonify
 
 def controller_create_aparelho_config(data):
     # Validação dos campos obrigatórios
@@ -30,13 +33,13 @@ def controller_create_aparelho_config(data):
     sucesso = models_insert_aparelho_config(
         data["id_config"],
         data["cliente"],
-        data["tipo_config"],  # Agora já vem como "Configuração Geral" ou "Manobra"
+        data["tipo_config"],
         data.get("re_assumiu"),
+        data.get("re_cadastrou"),  # novo campo
         data.get("observacao"),
     )
 
     if sucesso:
-        # Monta a mensagem de notificação
         mensagem = (
             f"<strong> Nova configuração cadastrada! </strong>\n\n"
             f"ID: {data['id_config']}\n"
@@ -46,11 +49,9 @@ def controller_create_aparelho_config(data):
         )
 
         send_telegram_message(mensagem)
-
         return {"message": "Aparelho cadastrado e notificação enviada"}, 201
 
     return {"message": "Erro ao cadastrar aparelho"}, 500
-
 
 def controller_get_all_aparelhos():
     aparelhos = models_get_all_aparelho_config()
@@ -141,3 +142,25 @@ def controller_reportar_erro(data):
         return {"message": "Relatório enviado com sucesso"}, 200
     else:
         return {"message": "Falha ao enviar relatório"}, 500
+
+
+def controller_finalizar_manobra(id):
+    dt_finalizou = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        # 1. Buscar a manobra
+        manobra = models_get_aparelho_config_by_id(id)
+        if not manobra:
+            return jsonify({"message": "Manobra não encontrada!"}), 404
+
+
+        # 3. Atualizando o status da manobra para 'finalizado'
+        update_status = models_update_finalizacao(id, dt_finalizou)
+
+        if update_status:
+            return jsonify({"message": "Manobra finalizada e nova configuração criada com sucesso!"}), 200
+        else:
+            return jsonify({"message": "Erro ao criar nova configuração ou atualizar manobra!"}), 500
+
+    except Exception as e:
+        print("Erro ao finalizar manobra:", e)
+        return jsonify({"message": "Erro ao finalizar manobra!"}), 500

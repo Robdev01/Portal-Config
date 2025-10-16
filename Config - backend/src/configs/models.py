@@ -15,16 +15,16 @@ def get_connection():
     )
 
 
-def models_insert_aparelho_config(id_config, cliente, tipo_config, re_assumiu=None, observacao=None):
+def models_insert_aparelho_config(id_config, cliente, tipo_config, re_assumiu=None, re_cadastrou=None, observacao=None):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
             sql = """
                 INSERT INTO aparelho_configuracao 
-                (id_config, cliente, tipo_config, status, re_assumiu, observacao, dt_cadastro)
-                VALUES (%s, %s, %s, 'pendente', %s, %s, NOW())
+                (id_config, cliente, tipo_config, status, re_assumiu, re_cadastrou, observacao, dt_cadastro)
+                VALUES (%s, %s, %s, 'pendente', %s, %s, %s, NOW())
             """
-            cursor.execute(sql, (id_config, cliente, tipo_config, re_assumiu, observacao))
+            cursor.execute(sql, (id_config, cliente, tipo_config, re_assumiu, re_cadastrou, observacao))
         conn.commit()
         return True
     except Exception as e:
@@ -35,11 +35,13 @@ def models_insert_aparelho_config(id_config, cliente, tipo_config, re_assumiu=No
 
 
 
+
 def models_get_all_aparelho_config():
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            sql = """SELECT 
+            sql = """
+                SELECT 
                     a.id,
                     a.id_config,
                     a.cliente,
@@ -50,10 +52,17 @@ def models_get_all_aparelho_config():
                     a.dt_assumiu,
                     a.dt_finalizou,
                     a.re_assumiu,
-                    u.nome AS nome_responsavel
-                FROM aparelho_configuracao a
-                LEFT JOIN usuarios u ON a.re_assumiu = u.re                
-                ORDER BY a.dt_cadastro DESC"""
+                    u_assumiu.nome AS nome_responsavel,
+                    a.re_cadastrou,
+                    u_cadastrou.nome AS nome_cadastrou
+                FROM aparelho_configuracao AS a
+                LEFT JOIN usuarios AS u_assumiu 
+                    ON a.re_assumiu = u_assumiu.re
+                LEFT JOIN usuarios AS u_cadastrou 
+                    ON a.re_cadastrou = u_cadastrou.re
+                ORDER BY a.dt_cadastro DESC
+            """
+
             cursor.execute(sql)
             return cursor.fetchall()
     finally:
@@ -147,10 +156,13 @@ def models_get_pendentes_config_geral():
                     a.dt_assumiu,
                     a.dt_finalizou,
                     a.re_assumiu,
-                    u.nome AS nome_responsavel
+                    u.nome AS nome_responsavel,
+                    a.re_cadastrou,
+                    u_cadastrou.nome AS nome_cadastrou
                 FROM aparelho_configuracao a
-                LEFT JOIN usuarios u ON a.re_assumiu = u.re
-                WHERE a.tipo_config = 'config_geral'
+                LEFT JOIN usuarios u ON a.re_assumiu = u.re                
+                LEFT JOIN usuarios AS u_cadastrou ON a.re_cadastrou = u_cadastrou.re
+                WHERE a.tipo_config = 'Configuração Geral'
                 AND a.status IN ('pendente', 'em_andamento')
                 ORDER BY a.dt_cadastro DESC
             """
@@ -175,10 +187,13 @@ def models_get_pendentes_manobra():
                     a.dt_cadastro,
                     a.dt_assumiu,
                     a.re_assumiu,
-                    u.nome AS nome_responsavel
+                    u.nome AS nome_responsavel,
+                     a.re_cadastrou,
+                    u_cadastrou.nome AS nome_cadastrou
                 FROM aparelho_configuracao a
                 LEFT JOIN usuarios u ON a.re_assumiu = u.re
-                WHERE a.tipo_config = 'manobra'
+                LEFT JOIN usuarios AS u_cadastrou ON a.re_cadastrou = u_cadastrou.re
+                WHERE a.tipo_config = 'Manobra'
                 AND a.status IN ('pendente', 'em_andamento')
                 ORDER BY a.dt_cadastro DESC
             """
@@ -252,12 +267,6 @@ def models_update_finalizacao(id_config, dt_finalizou):
 
 
 def models_get_aparelho_config(period="all"):
-    """
-    Retorna as configurações de aparelhos conforme o período solicitado:
-      - period="current_month" → Mês atual
-      - period="last_3_months" → Últimos 3 meses
-      - period="all" → Todos os registros
-    """
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
@@ -273,35 +282,42 @@ def models_get_aparelho_config(period="all"):
                     a.dt_assumiu,
                     a.dt_finalizou,
                     a.re_assumiu,
-                    u.nome AS nome_responsavel
+                    u.nome AS nome_responsavel,
+                    a.re_cadastrou,
+                    u_cadastrou.nome AS nome_cadastrou
                 FROM aparelho_configuracao a
                 LEFT JOIN usuarios u ON a.re_assumiu = u.re
+                LEFT JOIN usuarios AS u_cadastrou ON a.re_cadastrou = u_cadastrou.re
                 WHERE 1=1
             """
 
-            # =========================
-            # FILTROS POR PERÍODO
-            # =========================
             if period == "current_month":
                 sql += " AND MONTH(a.dt_cadastro) = MONTH(CURDATE()) AND YEAR(a.dt_cadastro) = YEAR(CURDATE())"
             elif period == "last_3_months":
                 sql += " AND a.dt_cadastro >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)"
-            # Se for "all", não aplica nenhum filtro
 
             sql += " ORDER BY a.dt_cadastro DESC"
 
             cursor.execute(sql)
-
-            # Converter o retorno em lista de dicionários (compatível com PyMySQL)
-            columns = [col[0] for col in cursor.description]
-            data = [dict(zip(columns, row)) for row in cursor.fetchall()]
-
-            print(f">>> Buscando aparelhos (período={period}) - Registros encontrados: {len(data)}")
-            return data
-
+            return cursor.fetchall()
     except Exception as e:
         print("Erro ao buscar aparelho_configuracao:", e)
         return []
     finally:
         conn.close()
 
+
+def models_update_manobra_status(id, status):
+    # Função para atualizar o status da manobra para 'finalizado'
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            sql = "UPDATE aparelho_configuracao SET status = %s WHERE id = %s"
+            cursor.execute(sql, (status, id))
+        conn.commit()
+        return True
+    except Exception as e:
+        print("Erro ao atualizar o status da manobra:", e)
+        return False
+    finally:
+        conn.close()

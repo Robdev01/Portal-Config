@@ -5,30 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3979326f-65f9-43ce-98ff-2611d80b15ec" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Config - backend/src/resumo/controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Config - backend/src/resumo/models.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Config - backend/src/resumo/router.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Config - backend/src/services/report_gmail.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - backend/.env" beforeDir="false" afterPath="$PROJECT_DIR$/Config - backend/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Config - backend/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config - backend/src/configs/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/Config - backend/src/configs/controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config - backend/src/configs/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/Config - backend/src/configs/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config - backend/src/configs/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/Config - backend/src/configs/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - banco de dados/vivob2b_configs.sql" beforeDir="false" afterPath="$PROJECT_DIR$/Config - banco de dados/vivob2b_configs.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - frontend/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/ApprovedConfigs.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/CoordinationReport.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/pages/CoordinationReport.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/CreateConfig.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/pages/CreateConfig.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/Dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/pages/Dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/DashboardCoordination.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/pages/DashboardCoordination.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/pages/Login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/PendingConfigGeral.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/pages/PendingConfigGeral.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/PendingConfigs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/pages/PendingConfigs.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/PendingManobras.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/pages/PendingManobras.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/Profiles.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/RegisterUser.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/pages/RegisterUser.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config - frontend/web/src/pages/UsersList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Config - frontend/web/src/pages/UsersList.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

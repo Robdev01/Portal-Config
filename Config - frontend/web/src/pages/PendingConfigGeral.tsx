@@ -26,6 +26,8 @@ type Config = {
   tipo_config: string;
   observacao?: string;
   re_assumiu?: string;
+  re_cadastrou?: string;
+  nome_cadastrou?: string;
   nome_responsavel?: string;
   status: string;
   dt_cadastro: string;
@@ -179,6 +181,15 @@ const PendingConfigGeral = () => {
 
   // 🔹 Marca como feito com animação
   const handleMarkAsDone = async (id: string) => {
+    const configToFinalize = configs.find((config) => config.id === id);
+    if (configToFinalize && !configToFinalize.re_assumiu) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao finalizar",
+        description: "Esta configuração precisa ser assumida antes de ser finalizada.",
+      });
+      return; // Não permite concluir a tarefa se não tiver sido assumida
+    }
     try {
       const now = new Date().toISOString();
 
@@ -203,7 +214,7 @@ const PendingConfigGeral = () => {
 
       toast({
         title: "Configuração finalizada ✓",
-        description: `A configuração ${id} foi marcada como concluída.`,
+        description: `A configuração foi marcada como concluída.`,
       });
     } catch (err: any) {
       toast({
@@ -294,8 +305,8 @@ const PendingConfigGeral = () => {
                   <Card
                     key={config.id}
                     className={`border border-border rounded-xl shadow-sm transition-all duration-200 ${config._removing
-                        ? "opacity-50 scale-[0.98] pointer-events-none"
-                        : "hover:shadow-md hover:border-primary/50"
+                      ? "opacity-50 scale-[0.98] pointer-events-none"
+                      : "hover:shadow-md hover:border-primary/50"
                       }`}
                   >
                     <CardHeader className="flex flex-row items-start justify-between pb-3">
@@ -325,12 +336,12 @@ const PendingConfigGeral = () => {
                           <strong>Status:</strong>{" "}
                           <span
                             className={`font-semibold ${config.status === "finalizado"
-                                ? "text-green-600"
-                                : config.status === "em_andamento"
-                                  ? "text-yellow-600"
-                                  : config.status === "pendente"
-                                    ? "text-red-600"
-                                    : "text-muted-foreground"
+                              ? "text-green-600"
+                              : config.status === "em_andamento"
+                                ? "text-yellow-600"
+                                : config.status === "pendente"
+                                  ? "text-red-600"
+                                  : "text-muted-foreground"
                               }`}
                           >
                             {config.status.charAt(0).toUpperCase() +
@@ -343,27 +354,32 @@ const PendingConfigGeral = () => {
                               {config.nome_responsavel || config.re_assumiu}
                             </>
                           )}
+
                         </p>
                       </div>
 
                       {/* Bolinha indicativa de status */}
                       <div
                         className={`w-3 h-3 rounded-full mt-2 ml-3 ${config.status === "finalizado"
-                            ? "bg-green-500"
-                            : config.status === "em_andamento"
-                              ? "bg-yellow-400"
-                              : config.status === "pendente"
-                                ? "bg-red-500"
-                                : "bg-gray-400"
+                          ? "bg-green-500"
+                          : config.status === "em_andamento"
+                            ? "bg-yellow-400"
+                            : config.status === "pendente"
+                              ? "bg-red-500"
+                              : "bg-gray-400"
                           }`}
                       />
                     </CardHeader>
 
                     <CardContent className="space-y-3 pt-0">
                       {/* Datas */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 text-xs text-muted-foreground gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-4 text-xs text-muted-foreground gap-2">
                         <div>
                           <strong>Cadastro:</strong> {formatDate(config.dt_cadastro)}
+                        </div>
+                        <div>
+                          <strong>Cadastrado por:</strong>{" "}
+                          {config.nome_cadastrou || config.re_cadastrou || "—"}
                         </div>
                         <div>
                           <strong>Assumido:</strong> {formatDate(config.dt_assumiu)}
@@ -376,11 +392,12 @@ const PendingConfigGeral = () => {
                       {/* Observações */}
                       {config.observacao && (
                         <div className="flex items-start gap-2 p-2 bg-muted/30 border border-border rounded-md text-xs leading-snug">
-                          <p className="whitespace-pre-line"><strong>Observação: </strong></p>
+                          <p className="whitespace-pre-line">
+                            <strong>Observação: </strong>
+                          </p>
                           <p className="whitespace-pre-line">{config.observacao}</p>
                         </div>
                       )}
-
 
                       {/* Ações */}
                       <div className="flex justify-end flex-wrap gap-2 pt-2">
@@ -416,6 +433,7 @@ const PendingConfigGeral = () => {
                         </Button>
                       </div>
                     </CardContent>
+
                   </Card>
                 );
               })}

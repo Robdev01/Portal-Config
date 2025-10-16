@@ -10,6 +10,7 @@ controller_get_pendentes_config_geral,
 controller_assumir_aparelho,
 controller_finalizar_configuracao,
 controller_get_aparelho_config,
+controller_finalizar_manobra,
                             )
 
 
@@ -71,6 +72,12 @@ def get_aparelhos_period():
     period = request.args.get("period", "all")
     resp, status = controller_get_aparelho_config(period)
     return jsonify(resp), status
+
+@api_aparelho.route("/finalizar_manobra/<id>", methods=["PATCH"])
+def route_finalizar_manobra(id):
+    return controller_finalizar_manobra(id)
+
+
 
 @api_aparelho.route("/reportar_erro", methods=["POST"])
 def reportar_erro():
